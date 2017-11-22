@@ -48,6 +48,7 @@ namespace KafeYonetim.Sunum.AnaUygulama
                 Console.WriteLine("10. Bulaşıkçı Ekle");
                 Console.WriteLine("11. Çalışanları Listele");
                 Console.WriteLine("12. Çalışan Sayısını Getir");
+                Console.WriteLine("13. Garson Listele");
                 Console.WriteLine();
                 Console.Write("Bir seçim yapınız (çıkmak için H harfine basınız): ");
                 var secim = Console.ReadLine();
@@ -57,7 +58,7 @@ namespace KafeYonetim.Sunum.AnaUygulama
                     case "1": ButunUrunlerListesiniYazdir(); Console.ReadLine(); break;
                     case "2": DegerdenYuksekFiyatliUrunleriGetir(); break;
                     case "3": UrunGir(); break;
-                    case "4": StoktaOlmayanUrunleriListele(); break;
+                    case "4": GarsonLİstele(); break;
                     case "5": UrunSil(); break;
                     case "6": MasaEkle(); break;
                     case "7": MasaSayisi(); break;
@@ -66,6 +67,7 @@ namespace KafeYonetim.Sunum.AnaUygulama
                     case "10": BulasikciEkle(); break;
                     case "11": CalisanListesiniGetir(); break;
                     case "12": CalisanSayisiniGetir(); break;
+                    case "13": GarsonLİstele(); break;
                     case "h": return;
                     default:
                         break;
@@ -178,10 +180,19 @@ namespace KafeYonetim.Sunum.AnaUygulama
             Console.ReadLine();
         }
 
-        private static void StoktaOlmayanUrunleriListele()
+        private static void GarsonLİstele()
         {
-            var urunler = DataManager.StoktaOlmayanUrunlerinListesiniGetir();
-            UrunListesiYazdir(urunler, "Stokta Olmayan Ürünler", true);
+            Console.Clear();
+            var garsonlar = DataManager.GarsonLİstele();
+
+            foreach(var item in garsonlar)
+            {
+                Console.WriteLine($"{item.Isim.ToString().PadRight(15)}");
+                Console.WriteLine($"{item.IseGirisTarihi}  ");
+                Console.WriteLine($"{item.Bahsis.ToString().PadRight(20)}");
+
+            }
+            
             Console.ReadLine();
         }
 

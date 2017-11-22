@@ -177,13 +177,26 @@ namespace KafeYonetim.Data
 
         }
 
-        public static List<Urun> StoktaOlmayanUrunlerinListesiniGetir()
+        public static List<Garson> GarsonLİstele()
         {
             using (var connection = CreateConnection())
             {
-                var command = new SqlCommand("SELECT * FROM Urunler WHERE StoktaVarMi = 'false'", connection);
+                var command = new SqlCommand("select Calisan.isim,Calisan.IseGirisTarihi,Garson.Bahsis from Calisan inner join Gorev on Calisan.GorevId=Gorev.id inner join Garson on Calisan.GorevTabloId=Garson.id where Calisan.GorevId = 2 ", connection);
 
-                return UrunListesiHazirla(command.ExecuteReader());
+                using (var reader = command.ExecuteReader())
+                {
+                    var liste = new List<Garson>();
+                    while(reader.Read())
+                    {
+                        var garson = new Garson(reader["Isim"].ToString(), (DateTime)reader["IseGirisTarihi"], DataManager.AktifKafeyiGetir());
+                        garson.Bahsis = (double)reader["bahsis"];
+
+
+                        liste.Add(garson);
+
+                    }
+                    return liste;
+                }
             }
 
         }
