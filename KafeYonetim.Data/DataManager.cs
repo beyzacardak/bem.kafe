@@ -94,14 +94,40 @@ namespace KafeYonetim.Data
             }
         }
 
-        public static int CalisanSayisiniGetir()
+        public static object CalisanSayisiniGetir()
         {
             using (var connection = CreateConnection())
             {
-                var command = new SqlCommand("select count(*) from Calisan", connection);
+                var command = new SqlCommand("SELECT COUNT(*) FROM Calisan", connection);
+
                 int result = Convert.ToInt32(command.ExecuteScalar());
 
                 return result;
+            }
+        }
+
+        public static List<Calisan> CalisanListesiniGetir()
+        {
+            using (var connection = CreateConnection())
+            {
+                var command = new SqlCommand("CalisanListesiniGetir", connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                using (var reader = command.ExecuteReader())
+                {
+                    var list = new List<Calisan>();
+
+                    while (reader.Read())
+                    {
+                        var calisan = new Calisan(reader["Isim"].ToString(), (DateTime)reader["IseGirisTarihi"], DataManager.AktifKafeyiGetir());
+
+                        calisan.Gorev.GorevAdi = reader["GorevAdi"].ToString();
+
+                        list.Add(calisan);
+                    }
+
+                    return list;
+                }
             }
         }
 
