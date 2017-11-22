@@ -58,7 +58,7 @@ namespace KafeYonetim.Sunum.AnaUygulama
                     case "1": ButunUrunlerListesiniYazdir(); Console.ReadLine(); break;
                     case "2": DegerdenYuksekFiyatliUrunleriGetir(); break;
                     case "3": UrunGir(); break;
-                    case "4": StoktaOlmayanUrunleriListele(); break;
+                    case "4": GarsonLİstele(); break;
                     case "5": UrunSil(); break;
                     case "6": MasaEkle(); break;
                     case "7": MasaSayisi(); break;
@@ -67,7 +67,6 @@ namespace KafeYonetim.Sunum.AnaUygulama
                     case "10": BulasikciEkle(); break;
                     case "11": CalisanListesiniGetir(); break;
                     case "12": CalisanSayisiniGetir(); break;
-                    case "13": GarsonListele(); break;
                     case "h": return;
                     default:
                         break;
@@ -200,10 +199,19 @@ namespace KafeYonetim.Sunum.AnaUygulama
             Console.ReadLine();
         }
 
-        private static void StoktaOlmayanUrunleriListele()
+        private static void GarsonLİstele()
         {
-            var urunler = DataManager.StoktaOlmayanUrunlerinListesiniGetir();
-            UrunListesiYazdir(urunler, "Stokta Olmayan Ürünler", true);
+            Console.Clear();
+            var garsonlar = DataManager.GarsonLİstele();
+
+            foreach(var item in garsonlar)
+            {
+                Console.WriteLine($"İsim: {item.Isim.ToString().PadRight(15)}");
+                Console.WriteLine($"İşe Giriş Tarihi: {item.IseGirisTarihi}  ");
+                Console.WriteLine($"Bahşiş: {item.Bahsis.ToString().PadRight(20)}");
+
+            }
+            
             Console.ReadLine();
         }
 
