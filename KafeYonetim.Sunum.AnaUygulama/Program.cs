@@ -48,6 +48,8 @@ namespace KafeYonetim.Sunum.AnaUygulama
                 Console.WriteLine("10. Bulaşıkçı Ekle");
                 Console.WriteLine("11. Çalışanları Listele");
                 Console.WriteLine("12. Çalışan Sayısını Getir");
+                Console.WriteLine("13. Garson Listele");
+                
                 Console.WriteLine();
                 Console.Write("Bir seçim yapınız (çıkmak için H harfine basınız): ");
                 var secim = Console.ReadLine();
@@ -57,22 +59,61 @@ namespace KafeYonetim.Sunum.AnaUygulama
                     case "1": ButunUrunlerListesiniYazdir(); Console.ReadLine(); break;
                     case "2": DegerdenYuksekFiyatliUrunleriGetir(); break;
                     case "3": UrunGir(); break;
-                    case "4": StoktaOlmayanUrunleriListele(); break;
+                    case "4": GarsonLİstele(); break;
                     case "5": UrunSil(); break;
                     case "6": MasaEkle(); break;
                     case "7": MasaSayisi(); break;
                     case "8": GarsonEkle(); break;
                     case "9": AsciEkle(); break;
                     case "10": BulasikciEkle(); break;
-                    case "11": CalisanSayisiniGetir(); break;
+                    case "11": CalisanListesiniGetir(); break;
                     case "12": CalisanSayisiniGetir(); break;
+                    case "13": GarsonListele();break;
                     case "h": return;
                     default:
                         break;
                 }
 
             } while (true);
+        }            
 
+        private static void ToplamGarsonSayisiToplamBahsis()
+        {
+            
+            var toplam = DataManager.ToplamGarsonSayisiToplamBahsis();
+            Console.WriteLine($"{toplam.Item1}  {toplam.Item2}");
+            Console.ReadLine();
+        }
+
+        private static void GarsonListele()
+        {
+            Console.Clear();
+
+            Console.Write("İsim".PadRight(30));
+            Console.Write("İşe Giriş Tarihi".PadRight(30));
+            Console.Write("Bahşiş".PadRight(5));
+            Console.WriteLine();
+
+            Console.WriteLine("".PadRight(60, '='));
+
+            List<Garson> garsonlar = DataManager.GarsonListele();
+
+            foreach (var garson in garsonlar)
+            {
+                Console.WriteLine($"{garson.Isim.PadRight(30)}{garson.IseGirisTarihi.ToString("dd.MM.yyyy").PadRight(30)}{garson.Bahsis}");
+            }
+            Console.WriteLine();
+            ToplamGarsonSayisiToplamBahsis();
+            Console.ReadLine();
+        }
+
+        private static void CalisanSayisiniGetir()
+        {
+            Console.Clear();
+            var calisanSayisi = DataManager.CalisanSayisiniGetir();
+
+            Console.WriteLine($"Toplam {calisanSayisi} çalışan var.");
+            Console.ReadLine();
         }
 
         private static void BulasikciEkle()
@@ -92,15 +133,22 @@ namespace KafeYonetim.Sunum.AnaUygulama
             Console.ReadLine();
         }
 
-        private static void CalisanSayisiniGetir()
+        private static void CalisanListesiniGetir()
         {
             Console.Clear();
 
-            int sayi = DataManager.CalisanSayisiniGetir();
+            List<Calisan> liste = DataManager.CalisanListesiniGetir();
 
-            Console.WriteLine($"{sayi}");
+            Console.Write("Id".PadRight(5));
+            Console.Write("İsim".PadRight(30));
+            Console.Write("İşe Giriş Tarihi".PadRight(20));
+            Console.WriteLine("Görev");
+            Console.WriteLine("".PadRight(60, '='));
 
-            
+            foreach (var calisan in liste)
+            {
+                Console.WriteLine($"{calisan.Id.ToString().PadRight(5)}{calisan.Isim.PadRight(30)}{calisan.IseGirisTarihi.ToString("yyyy.MMMM.dddd").PadRight(20)}{calisan.Gorev.GorevAdi}");
+            }
 
             Console.ReadLine();
         }
@@ -163,10 +211,19 @@ namespace KafeYonetim.Sunum.AnaUygulama
             Console.ReadLine();
         }
 
-        private static void StoktaOlmayanUrunleriListele()
+        private static void GarsonLİstele()
         {
-            var urunler = DataManager.StoktaOlmayanUrunlerinListesiniGetir();
-            UrunListesiYazdir(urunler, "Stokta Olmayan Ürünler", true);
+            Console.Clear();
+            var garsonlar = DataManager.GarsonLİstele();
+
+            foreach(var item in garsonlar)
+            {
+                Console.WriteLine($"İsim: {item.Isim.ToString().PadRight(15)}");
+                Console.WriteLine($"İşe Giriş Tarihi: {item.IseGirisTarihi}  ");
+                Console.WriteLine($"Bahşiş: {item.Bahsis.ToString().PadRight(20)}");
+
+            }
+            
             Console.ReadLine();
         }
 
