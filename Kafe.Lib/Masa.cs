@@ -21,10 +21,10 @@ namespace KafeYonetim.Lib
 
         public void GarsonCagir()
         {
-            if(!(Garson is null))
-            {
-                return;
-            }
+            //if(!(Garson is null))
+            //{
+            //    return;
+            //}
 
             Garson = Kafe.UygunGarsonuBul(CalisanDurum.Masada);
 
