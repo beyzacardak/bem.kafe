@@ -49,6 +49,7 @@ namespace KafeYonetim.Sunum.AnaUygulama
                 Console.WriteLine("11. Çalışanları Listele");
                 Console.WriteLine("12. Çalışan Sayısını Getir");
                 Console.WriteLine("13. Garson Listele");
+                
                 Console.WriteLine();
                 Console.Write("Bir seçim yapınız (çıkmak için H harfine basınız): ");
                 var secim = Console.ReadLine();
@@ -67,12 +68,21 @@ namespace KafeYonetim.Sunum.AnaUygulama
                     case "10": BulasikciEkle(); break;
                     case "11": CalisanListesiniGetir(); break;
                     case "12": CalisanSayisiniGetir(); break;
+                    case "13": GarsonListele();break;
                     case "h": return;
                     default:
                         break;
                 }
 
             } while (true);
+        }            
+
+        private static void ToplamGarsonSayisiToplamBahsis()
+        {
+            
+            var toplam = DataManager.ToplamGarsonSayisiToplamBahsis();
+            Console.WriteLine($"{toplam.Item1}  {toplam.Item2}");
+            Console.ReadLine();
         }
 
         private static void GarsonListele()
@@ -82,6 +92,7 @@ namespace KafeYonetim.Sunum.AnaUygulama
             Console.Write("İsim".PadRight(30));
             Console.Write("İşe Giriş Tarihi".PadRight(30));
             Console.Write("Bahşiş".PadRight(5));
+            Console.WriteLine();
 
             Console.WriteLine("".PadRight(60, '='));
 
@@ -91,7 +102,8 @@ namespace KafeYonetim.Sunum.AnaUygulama
             {
                 Console.WriteLine($"{garson.Isim.PadRight(30)}{garson.IseGirisTarihi.ToString("dd.MM.yyyy").PadRight(30)}{garson.Bahsis}");
             }
-
+            Console.WriteLine();
+            ToplamGarsonSayisiToplamBahsis();
             Console.ReadLine();
         }
 

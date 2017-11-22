@@ -27,7 +27,7 @@ namespace KafeYonetim.Data
                 using (var result = command.ExecuteReader())
                 {
                     result.Read();
-                    var kafe = new Kafe((int)result["Id"], result["Ad"].ToString(), result["AcilisSaati"].ToString(), result["KapanisSaati"].ToString());
+                    var kafe = new Kafe((int)result["id"], result["Ad"].ToString(), result["AcilisSaaiti"].ToString(), result["KapanisSaati"].ToString());
                     kafe.Durum = (KafeDurum)result["Durum"];
 
                     return kafe;
@@ -94,6 +94,20 @@ namespace KafeYonetim.Data
             }
         }
 
+        public static Tuple<int, double> ToplamGarsonSayisiToplamBahsis()
+        {
+            using (var connection = CreateConnection())
+            {
+                var command = new SqlCommand("select COUNT(*) as garsonSayisi, sum(Garson.Bahsis) as toplamBahsis from Garson",connection);
+
+                var reader = command.ExecuteReader();
+                reader.Read();
+
+                var tupple = new Tuple<int, double>((int)reader["GarsonSayisi"], (double)reader["toplamBahsis"]);
+                return tupple;
+            }
+        }
+
         public static object CalisanSayisiniGetir()
         {
             using (var connection = CreateConnection())
@@ -110,7 +124,7 @@ namespace KafeYonetim.Data
         {
             using (var conn = CreateConnection())
             {
-                var command = new SqlCommand("SELECT Isim , IseGirisTarihi, Bahsis FROM Calisan INNER JOIN Garson ON Calisan.GorevTabloId = Garson.Id WHERE Calisan.GorevId = 2", conn);
+                var command = new SqlCommand("select Calisan.isim,Calisan.IseGirisTarihi,Garson.Bahsis from Calisan inner join Gorev on Calisan.GorevId=Gorev.id inner join Garson on Calisan.GorevTabloId=Garson.id where Calisan.GorevId = 2; ", conn);
 
                 var list = new List<Garson>();
 
@@ -118,13 +132,14 @@ namespace KafeYonetim.Data
                 {
                     while (reader.Read())
                     {
-                        var garson = new Garson(reader["Isim"].ToString(), (DateTime)reader["IseGirisTarihi"], AktifKafeyiGetir());
+                        var garson = new Garson(reader["isim"].ToString(), (DateTime)reader["IseGirisTarihi"], AktifKafeyiGetir());
                         garson.Bahsis = Convert.ToInt32(reader["Bahsis"]);
 
                         list.Add(garson);
                     }
 
                     return list;
+
                 }
             }
         }
