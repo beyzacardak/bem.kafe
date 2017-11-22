@@ -187,9 +187,9 @@ namespace KafeYonetim.Sunum.AnaUygulama
 
             foreach(var item in garsonlar)
             {
-                Console.WriteLine($"{item.Isim.ToString().PadRight(15)}");
-                Console.WriteLine($"{item.IseGirisTarihi}  ");
-                Console.WriteLine($"{item.Bahsis.ToString().PadRight(20)}");
+                Console.WriteLine($"İsim: {item.Isim.ToString().PadRight(15)}");
+                Console.WriteLine($"İşe Giriş Tarihi: {item.IseGirisTarihi}  ");
+                Console.WriteLine($"Bahşiş: {item.Bahsis.ToString().PadRight(20)}");
 
             }
             

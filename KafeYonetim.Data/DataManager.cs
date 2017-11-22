@@ -181,14 +181,14 @@ namespace KafeYonetim.Data
         {
             using (var connection = CreateConnection())
             {
-                var command = new SqlCommand("select Calisan.isim,Calisan.IseGirisTarihi,Garson.Bahsis from Calisan inner join Gorev on Calisan.GorevId=Gorev.id inner join Garson on Calisan.GorevTabloId=Garson.id where Calisan.GorevId = 2 ", connection);
+                var command = new SqlCommand("select Calisan.isim,Calisan.IseGirisTarihi,Garson.Bahsis from Calisan inner join Gorev on Calisan.GorevId=Gorev.id inner join Garson on Calisan.GorevTabloId=Garson.id where Gorev.id = 2 ", connection);
 
                 using (var reader = command.ExecuteReader())
                 {
                     var liste = new List<Garson>();
                     while(reader.Read())
                     {
-                        var garson = new Garson(reader["Isim"].ToString(), (DateTime)reader["IseGirisTarihi"], DataManager.AktifKafeyiGetir());
+                       var garson = new Garson(reader["Isim"].ToString(), (DateTime)reader["IseGirisTarihi"], DataManager.AktifKafeyiGetir());
                         garson.Bahsis = (double)reader["bahsis"];
 
 
