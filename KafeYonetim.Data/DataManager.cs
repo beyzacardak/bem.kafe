@@ -8,7 +8,7 @@ namespace KafeYonetim.Data
 
     public class DataManager
     {
-        private static string connStr = "Data Source=LENOVO\\SQLEXPRESS;Initial Catalog=KafeYonetim;Integrated Security=True";
+        private static string connStr = "Data Source=DESKTOP-S3O5AOR;Initial Catalog=KafeYonetim;Integrated Security=True";
 
         private static SqlConnection CreateConnection()
         {
@@ -27,7 +27,38 @@ namespace KafeYonetim.Data
                 using (var result = command.ExecuteReader())
                 {
                     result.Read();
-                    var kafe = new Kafe((int)result["id"], result["Ad"].ToString(), result["AcilisSaaiti"].ToString(), result["KapanisSaati"].ToString());
+                    var kafe = new Kafe((int)result["id"], result["Ad"].ToString(), result["AcilisSaa" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "" +
+                        "ti"].ToString(), result["KapanisSaati"].ToString());
                     kafe.Durum = (KafeDurum)result["Durum"];
 
                     return kafe;
@@ -138,7 +169,7 @@ namespace KafeYonetim.Data
          {
             using (var connection = CreateConnection())
             {
-                var command = new SqlCommand("$SELECT * FROM(SELECT ROW_NUMBER() OVER(ORDER BY c.Isim) AS rownum, c.Isim, c.IseGirisTarihi, a.Puan, c.GorevId  from Calisan c inner join Gorev g on c.GorevId = g.id inner join asci a on c.GorevTabloId = a.id  where g.id = 1) AS Salaries1 WHERE  rownum >= { sayi1 } AND rownum <= { sayi2}",connection);
+                var command = new SqlCommand($"SELECT * FROM(SELECT ROW_NUMBER() OVER(ORDER BY c.Isim) AS rownum, c.Isim, c.IseGirisTarihi, a.Puan, c.GorevId  from Calisan c inner join Gorev g on c.GorevId = g.id inner join asci a on c.GorevTabloId = a.id  where g.id = 1) AS Salaries1 WHERE  rownum >= { sayi1 } AND rownum <= { sayi2}",connection);
 
                     var list = new List<Asci>();
                 
