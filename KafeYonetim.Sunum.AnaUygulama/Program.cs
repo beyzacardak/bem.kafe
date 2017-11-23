@@ -50,6 +50,7 @@ namespace KafeYonetim.Sunum.AnaUygulama
                 Console.WriteLine("12. Çalışan Sayısını Getir");
                 Console.WriteLine("13. Garson Listele");
                 Console.WriteLine("14. Asçı Listele");
+                Console.WriteLine("15. Filtrele");
 
                 Console.WriteLine();
                 Console.Write("Bir seçim yapınız (çıkmak için H harfine basınız): ");
@@ -71,12 +72,58 @@ namespace KafeYonetim.Sunum.AnaUygulama
                     case "12": CalisanSayisiniGetir(); break;
                     case "13": GarsonListele();break;
                     case "14": AsciListele();break;
+                    case "15": CalisanIsimleriniFiltrele();break;
                     case "h": return;
                     default:
                         break;
                 }
 
             } while (true);
+        }
+
+        private static void CalisanIsimleriniFiltrele()
+        {
+            Console.Clear();
+
+            Console.Write("Bir metin giriniz: ");
+            string metin = Console.ReadLine();
+
+            int toplamSayfaSayisi = DataManager.FiltrelisayfaSayisiniBul(metin);
+            do
+            {
+                Console.WriteLine("sayfa numaraları: ");
+                for (int i = 1; i <= toplamSayfaSayisi; i++)
+                {
+                    Console.Write($"{i} \t");
+                }
+
+                Console.WriteLine();
+                Console.WriteLine("sayfa numarası giriniz :");
+                int sayfanumarasi = int.Parse(Console.ReadLine());
+                int elemanSayisi = 20;
+
+                Console.Clear();
+
+                if (sayfanumarasi >= 1 && sayfanumarasi <= toplamSayfaSayisi)
+                {
+                    List<Calisan> calisanlar = DataManager.CalisanIsimleriniFiltrele(((sayfanumarasi - 1) * elemanSayisi) + 1, sayfanumarasi * elemanSayisi);
+                    foreach (var item in calisanlar)
+                    {
+                        Console.WriteLine($"{item.Isim.PadRight(30)}{item.IseGirisTarihi.ToString("dd.MM.yyyy").PadRight(30)}");
+                    }
+                    Console.WriteLine();
+                }
+                else
+                {
+                    Console.WriteLine("girilmesi gereken aralıkta girmediniz...");
+                }
+            } while (true);
+
+            List<Calisan> calisanlar = DataManager.CalisanIsimleriniFiltrele(metin);
+
+            //CalisanListesiniEkranaYazdir(calisanlar);
+
+            Console.Read();
         }
 
         private static void AsciListele()

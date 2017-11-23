@@ -107,8 +107,43 @@ namespace KafeYonetim.Data
                 return tupple;
             }
         }
+        public static int FiltrelisayfaSayisiniBul(string metin)
+        {
+            using (SqlConnection conn = CreateConnection())
+            {
+                SqlCommand command = new SqlCommand("select Ceiling(count(*)/10.0) from Calisan where Calisan.Isim LIKE '%'+@metin+'%'", conn);
+                int sayi = Convert.ToInt32(command.ExecuteScalar());
+                return sayi;
+            }
+        }
 
-        
+
+        public static List<Calisan> CalisanIsimleriniFiltrele(string metin)
+        {
+            using (var connection = CreateConnection())
+            {
+                var command = new SqlCommand("SELECT Calisan.Isim, Gorev.GorevAdi FROM Calisan INNER JOIN Gorev ON Calisan.GorevId = Gorev.Id WHERE Calisan.Isim LIKE '%'+@metin+'%'", connection);
+
+                command.Parameters.AddWithValue("@metin", metin);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    var list = new List<Calisan>();
+
+                    while (reader.Read())
+                    {
+                        var calisan = new Calisan(reader["Isim"].ToString(), (DateTime)reader["IseGirisTarihi"], DataManager.AktifKafeyiGetir());
+
+                        calisan.Gorev.GorevAdi = reader["GorevAdi"].ToString();
+
+                        list.Add(calisan);
+                    }
+
+                    return list;
+                }
+            }
+
+        }
 
         public static object CalisanSayisiniGetir()
         {
