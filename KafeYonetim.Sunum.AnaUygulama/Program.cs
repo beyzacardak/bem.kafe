@@ -66,10 +66,26 @@ namespace KafeYonetim.Sunum.AnaUygulama
             string metin = Console.ReadLine();
 
             List<Calisan> calisanlar = DataManager.CalisanListesiniIsmeGoreFiltrele(metin);
+            int toplamSayfaSayisi = DataManager.FiltreliCalisanSayfaSayisiniGetir(metin);
+            int sayfaNumarasi = 1;
 
-            CalisanListesiniEkranaYazdir(calisanlar);
+            while (true)
+            {
+                CalisanListesiniEkranaYazdir(calisanlar);
 
-            Console.Read();
+                Console.WriteLine($"Sayfa: {sayfaNumarasi}/{toplamSayfaSayisi}");
+
+                sayfaNumarasi = SayfaNumarasiniOku(toplamSayfaSayisi);
+
+                if (sayfaNumarasi == -5484)
+                {
+                    return;
+                }
+
+                calisanlar = DataManager.CalisanListesiniGetir(sayfaNumarasi);
+            }
+
+
         }
 
         private static void GarsonListele()
