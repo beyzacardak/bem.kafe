@@ -8,7 +8,7 @@ namespace KafeYonetim.Data
 
     public class DataManager
     {
-        private static string connStr = "Data Source=DESKTOP-S3O5AOR;Initial Catalog=KafeYonetim;Integrated Security=True";
+        private static string connStr = "Data Source=LENOVO\\SQLEXPRESS;Initial Catalog=KafeYonetim;Integrated Security=True";
 
         private static SqlConnection CreateConnection()
         {
@@ -27,38 +27,7 @@ namespace KafeYonetim.Data
                 using (var result = command.ExecuteReader())
                 {
                     result.Read();
-                    var kafe = new Kafe((int)result["id"], result["Ad"].ToString(), result["AcilisSaa" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "ti"].ToString(), result["KapanisSaati"].ToString());
+                    var kafe = new Kafe((int)result["Id"], result["Ad"].ToString(), result["AcilisSaati"].ToString(), result["KapanisSaati"].ToString());
                     kafe.Durum = (KafeDurum)result["Durum"];
 
                     return kafe;
@@ -124,22 +93,80 @@ namespace KafeYonetim.Data
                 //return new MasaKisiSayisi { MasaSayisi = (int)reader["MasaSayisi"], KisiSayisi=(int)reader["KisiSayisi"]};
             }
         }
-
-        public static Tuple<int, double> ToplamGarsonSayisiToplamBahsis()
+        public static int FiltreliCalisanSayfaSayisiniGetir(string metin="", decimal sayfadakiKayitSayisi = 20)
         {
             using (var connection = CreateConnection())
             {
-                var command = new SqlCommand("select COUNT(*) as garsonSayisi, sum(Garson.Bahsis) as toplamBahsis from Garson",connection);
+                var command = new SqlCommand("CalisanSayfaSayisiHesapla", connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
 
-                var reader = command.ExecuteReader();
-                reader.Read();
+                command.Parameters.AddWithValue("@SayfadakiOgeSayisi", sayfadakiKayitSayisi);
+                command.Parameters.AddWithValue("@aranacak", metin);
+                int sayfaSayisi = Convert.ToInt32(command.ExecuteScalar());
 
-                var tupple = new Tuple<int, double>((int)reader["GarsonSayisi"], (double)reader["toplamBahsis"]);
-                return tupple;
+                return sayfaSayisi;
             }
         }
 
-        
+        public static List<Calisan> CalisanListesiniIsmeGoreFiltrele(string metin="",int sayfaNumarasi=1, int sayfadakiKayitSayisi=20)
+        {
+            using (var connection = CreateConnection())
+            {
+                var command = new SqlCommand("SayfaSayisinaGoreCalisanGetir", connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@metin", metin);
+                command.Parameters.AddWithValue("@sayfaNumarasi",sayfaNumarasi);
+                command.Parameters.AddWithValue("@sayfadakiKayitSayisi",sayfadakiKayitSayisi);
+               
+
+                using (var reader = command.ExecuteReader())
+                {
+                    var list = new List<Calisan>();
+
+                    while (reader.Read())
+                    {
+                        var calisan = calisanlariEkle(reader);
+
+                        list.Add(calisan);
+                    }
+
+                    return list;
+                }
+            }
+        }
+
+        public static Calisan calisanlariEkle(SqlDataReader reader)
+        {
+            var calisan = new Calisan(reader["Isim"].ToString(), (DateTime)reader["IseGirisTarihi"], DataManager.AktifKafeyiGetir());
+
+            calisan.Gorev.GorevAdi = reader["GorevAdi"].ToString();
+            return calisan;
+        }
+
+        public static double GarsonBahsisToplami()
+        {
+            using (var connection = CreateConnection())
+            {
+                var command = new SqlCommand("SELECT SUM(Bahsis) FROM Garson", connection);
+
+                double result = (double)command.ExecuteScalar();
+
+                return result;
+            }
+        }
+
+        public static int GarsonSayisi()
+        {
+            using (var connection = CreateConnection())
+            {
+                var command = new SqlCommand("SELECT COUNT(*) FROM Garson", connection);
+
+                int result = (int)command.ExecuteScalar();
+
+                return result;
+            }
+        }
 
         public static object CalisanSayisiniGetir()
         {
@@ -152,70 +179,12 @@ namespace KafeYonetim.Data
                 return result;
             }
         }
-        ////////////////////////////////////////////////////////
-        public static int sayfaSayisiniBul()
-        {
-            using (SqlConnection conn = CreateConnection())
-            {
-                SqlCommand command = new SqlCommand("select Ceiling(count(*)/20.0) from Calisan where Calisan.GorevId=1", conn);
-                int sayi = Convert.ToInt32(command.ExecuteScalar());
-                return sayi;
-            }
-        }
-
-
-
-         public static List<Asci> AsciListele(int sayi1, int sayi2)
-         {
-            using (var connection = CreateConnection())
-            {
-                var command = new SqlCommand($"SELECT * FROM(SELECT ROW_NUMBER() OVER(ORDER BY c.Isim) AS rownum, c.Isim, c.IseGirisTarihi, a.Puan, c.GorevId  from Calisan c inner join Gorev g on c.GorevId = g.id inner join asci a on c.GorevTabloId = a.id  where g.id = 1) AS Salaries1 WHERE  rownum >= { sayi1 } AND rownum <= { sayi2}",connection);
-
-                    var list = new List<Asci>();
-                
-                
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var asci = new Asci(reader["Isim"].ToString(), (DateTime)reader["IseGirisTarihi"], AktifKafeyiGetir());
-                             asci.Puan = Convert.ToInt32(reader["Puan"]);
-                       
-                            list.Add(asci);
-                        
-                        
-                        }
-                    
-                        return list;
-                      }
-                 }
-            }
- 
-        //  public static List<Garson> GarsonBilgileriniGetir()
-        //{
-        //    using (SqlConnection connection = CreateConnection()) ;
-        //    {   
-
-        //        var list = new List<Asci>();
-        //        using (var reader=command.ExecuteReader())
-        //        {
-        //            while(reader.Read())
-        //            {
-        //                var asci= new Asci(reader["isim"].ToString(), (DateTime)reader["IseGirisTarihi"], AktifKafeyiGetir());
-
-        //                asci.Puan = Convert.ToInt32(reader["Puan"]);
-        //                list.Add(asci);                    }
-        //        }
-        //        return list;
-        //    }
-        //}
-        
 
         public static List<Garson> GarsonListele()
         {
             using (var conn = CreateConnection())
             {
-                var command = new SqlCommand("select Calisan.isim,Calisan.IseGirisTarihi,Garson.Bahsis from Calisan inner join Gorev on Calisan.GorevId=Gorev.id inner join Garson on Calisan.GorevTabloId=Garson.id where Calisan.GorevId = 2; ", conn);
+                var command = new SqlCommand("SELECT Isim , IseGirisTarihi, Bahsis FROM Calisan INNER JOIN Garson ON Calisan.GorevTabloId = Garson.Id WHERE Calisan.GorevId = 2", conn);
 
                 var list = new List<Garson>();
 
@@ -223,24 +192,41 @@ namespace KafeYonetim.Data
                 {
                     while (reader.Read())
                     {
-                        var garson = new Garson(reader["isim"].ToString(), (DateTime)reader["IseGirisTarihi"], AktifKafeyiGetir());
+                        var garson = new Garson(reader["Isim"].ToString(), (DateTime)reader["IseGirisTarihi"], AktifKafeyiGetir());
                         garson.Bahsis = Convert.ToInt32(reader["Bahsis"]);
 
                         list.Add(garson);
                     }
 
                     return list;
-
                 }
             }
         }
 
-        public static List<Calisan> CalisanListesiniGetir()
+        public static int CalisanSayfaSayisiniGetir(decimal sayfadakiKayitSayisi = 20)
         {
             using (var connection = CreateConnection())
             {
-                var command = new SqlCommand("CalisanListesiniGetir", connection);
+                var command = new SqlCommand("CalisanSayfaSayisiHesapla", connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@SayfadakiOgeSayisi", sayfadakiKayitSayisi);
+
+                int sayfaSayisi = Convert.ToInt32(command.ExecuteScalar());
+
+                return sayfaSayisi;
+            }
+        }
+
+        public static List<Calisan> CalisanListesiniGetir(int sayfaNumarasi =1 , int sayfadakiKayitSayisi = 20)
+        {
+            using (var connection = CreateConnection())
+            {
+                var command = new SqlCommand("SayfaSayisinaGoreCalisanGetir", connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@sayfaNumarasi", sayfaNumarasi);
+                command.Parameters.AddWithValue("@sayfadakiKayitSayisi", sayfadakiKayitSayisi);
 
                 using (var reader = command.ExecuteReader())
                 {
@@ -306,26 +292,13 @@ namespace KafeYonetim.Data
 
         }
 
-        public static List<Garson> GarsonLİstele()
+        public static List<Urun> StoktaOlmayanUrunlerinListesiniGetir()
         {
             using (var connection = CreateConnection())
             {
-                var command = new SqlCommand("select Calisan.isim,Calisan.IseGirisTarihi,Garson.Bahsis from Calisan inner join Gorev on Calisan.GorevId=Gorev.id inner join Garson on Calisan.GorevTabloId=Garson.id where Gorev.id = 2 ", connection);
+                var command = new SqlCommand("SELECT * FROM Urunler WHERE StoktaVarMi = 'false'", connection);
 
-                using (var reader = command.ExecuteReader())
-                {
-                    var liste = new List<Garson>();
-                    while(reader.Read())
-                    {
-                       var garson = new Garson(reader["Isim"].ToString(), (DateTime)reader["IseGirisTarihi"], DataManager.AktifKafeyiGetir());
-                        garson.Bahsis = (double)reader["bahsis"];
-
-
-                        liste.Add(garson);
-
-                    }
-                    return liste;
-                }
+                return UrunListesiHazirla(command.ExecuteReader());
             }
 
         }
