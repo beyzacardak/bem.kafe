@@ -8,7 +8,7 @@ namespace KafeYonetim.Data
 
     public class DataManager
     {
-        private static string connStr = "Data Source=LENOVO\\SQLEXPRESS;Initial Catalog=KafeYonetim;Integrated Security=True";
+        private static string connStr = "Data Source=DESKTOP-S3O5AOR;Initial Catalog=KafeYonetim;Integrated Security=True";
 
         private static SqlConnection CreateConnection()
         {
@@ -27,7 +27,7 @@ namespace KafeYonetim.Data
                 using (var result = command.ExecuteReader())
                 {
                     result.Read();
-                    var kafe = new Kafe((int)result["Id"], result["Ad"].ToString(), result["AcilisSaati"].ToString(), result["KapanisSaati"].ToString());
+                    var kafe = new Kafe((int)result["id"], result["Ad"].ToString(), result["AcilisSaati"].ToString(), result["KapanisSaati"].ToString());
                     kafe.Durum = (KafeDurum)result["Durum"];
 
                     return kafe;
@@ -97,11 +97,11 @@ namespace KafeYonetim.Data
         {
             using (var connection = CreateConnection())
             {
-                var command = new SqlCommand("CalisanSayfaSayisiHesapla", connection);
+                var command = new SqlCommand("FiltreliCalisanSayfaSayisiHesapla", connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
 
                 command.Parameters.AddWithValue("@SayfadakiOgeSayisi", sayfadakiKayitSayisi);
-                command.Parameters.AddWithValue("@aranacak", metin);
+                command.Parameters.AddWithValue("@metin", metin);
                 int sayfaSayisi = Convert.ToInt32(command.ExecuteScalar());
 
                 return sayfaSayisi;
@@ -112,7 +112,7 @@ namespace KafeYonetim.Data
         {
             using (var connection = CreateConnection())
             {
-                var command = new SqlCommand("SayfaSayisinaGoreCalisanGetir", connection);
+                var command = new SqlCommand("FiltreliSayfaSayisinaGoreCalisanGetir", connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
 
                 command.Parameters.AddWithValue("@metin", metin);
